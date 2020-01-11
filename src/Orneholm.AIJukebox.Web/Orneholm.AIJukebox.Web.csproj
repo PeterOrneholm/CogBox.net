@@ -1,0 +1,33 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+    <PropertyGroup>
+        <TargetFramework>netcoreapp3.1</TargetFramework>
+        <UserSecretsId>d34f4e7e-75cb-43c0-b0b3-37f9a2005c27</UserSecretsId>
+
+        <LangVersion>latest</LangVersion>
+        <Nullable>enable</Nullable>
+        <NeutralLanguage>en</NeutralLanguage>
+        <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+
+        <Description>Control Spotify through Computer Vision</Description>
+
+        <Authors>Peter Örneholm</Authors>
+        <Company>Orneholm AB</Company>
+        <Copyright>Copyright © Peter Örneholm</Copyright>
+
+        <RepositoryType>git</RepositoryType>
+        <RepositoryUrl>https://github.com/PeterOrneholm/Jukebox.ai.git</RepositoryUrl>
+        <PackageProjectUrl>https://github.com/PeterOrneholm/Jukebox.ai.net</PackageProjectUrl>
+
+        <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
+        <DockerfileContext>..\..</DockerfileContext>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <PackageReference Include="Microsoft.ApplicationInsights.AspNetCore" Version="2.12.0" />
+        <PackageReference Include="Microsoft.Azure.CognitiveServices.Vision.ComputerVision" Version="6.0.0-dev.20190919.3" />
+        <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.9.5" />
+        <PackageReference Include="Microsoft.AspNetCore.Mvc.Razor.RuntimeCompilation" Version="3.1.0" />
+        <PackageReference Include="SpotifyAPI.Web.Auth" Version="4.2.2" />
+    </ItemGroup>
+</Project>

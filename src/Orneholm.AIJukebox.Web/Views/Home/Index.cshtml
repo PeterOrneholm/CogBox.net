@@ -1,0 +1,81 @@
+@using System.Text.Json
+@using Microsoft.Extensions.Options
+@using Orneholm.AIJukebox.Web.Models
+@model Orneholm.AIJukebox.Web.Models.HomeIndexViewModel
+@inject IOptions<AiJukeboxOptions> AiJukeboxOptions
+@{
+    var jsonSerializerOptions = new JsonSerializerOptions
+    {
+        PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+        WriteIndented = true
+    };
+}
+
+<div class="jai-page-wrapper">
+    <div class="container">
+        <div class="text-center">
+            <h1>AI Jukebox</h1>
+        </div>
+        <div class="row">
+            <div class="col-md-6 order-md-2">
+                <div class="img-thumbnail" id="song">
+                    <div class="embed-responsive embed-responsive-4by3" id="analyze-music">
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6  order-md-1">
+                <div class="img-thumbnail" id="camera">
+                    <div class="embed-responsive embed-responsive-4by3" style="position: relative;">
+                        <video id="videopreview" class="embed-responsive-item"></video>
+                        <div id="analyze-tags"></div>
+                    </div>
+                    <div id="camera-start">
+                        <i class="fa fa-camera-retro fa-5x"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<footer class="jai-footer">
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-4">
+                <h4>About</h4>
+                <p>
+                    Created using <a href="https://www.microsoft.com/cognitive-services">Azure Cognitive Services</a> and <a href="https://developer.spotify.com/web-api/">Spotify API</a>.
+                </p>
+                <p>
+                    The <a href="https://github.com/PeterOrneholm/Jukebox.ai">Sourcecode is available at GitHub</a> and <a href="https://hub.docker.com/r/peterorneholm/orneholmaijukeboxweb">Docker image available at Dockerhub</a>.
+                </p>
+            </div>
+
+            <div class="col-sm-4">
+                <h4>Author</h4>
+                <p>
+                    Developed by <a href="https://twitter.com/PeterOrneholm" target="_blank">@@PeterOrneholm</a> as a demo for the session <a href="http://bit.ly/peterorneholm-democratizing-ai">Democratizing AI with Azure Cognitive Services</a>.
+                </p>
+            </div>
+        </div>
+        <p class="jai-footer-sitename">
+            Jukebox.ai
+        </p>
+    </div>
+</footer>
+
+@section Scripts {
+    <script>
+        (function(window) {
+            window.jukeboxai = {
+                config: @Html.Raw(JsonSerializer.Serialize(AiJukeboxOptions.Value, jsonSerializerOptions)),
+                keys: {
+                    spotifyBearerToken: '@Model.SpotifyBearerToken'
+                }
+            };
+        }(this));
+    </script>
+}
+
+<script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+        }

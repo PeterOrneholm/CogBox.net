@@ -1,0 +1,82 @@
+@using Microsoft.Extensions.Options
+@using Orneholm.AIJukebox.Web.Models
+@inject Microsoft.ApplicationInsights.AspNetCore.JavaScriptSnippet JavaScriptSnippet
+@inject IOptions<GoogleAnalyticsOptions> GoogleAnalyticsOptions
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <base href="/" />
+
+    <!-- CREDITS -->
+    <!--
+
+    This site is created and maintained by Peter Örneholm.
+
+    https://twitter.com/PeterOrneholm
+    https://peter.orneholm.com/
+
+    Source available at GitHub:
+    https://github.com/PeterOrneholm/Jukebox.ai
+
+    -->
+    <!-- Meta -->
+    <title>Jukebox.ai - Control Spotify through Computer Vision</title>
+    <meta name="description" content="Control Spotify through Computer Vision">
+    <meta property="og:image" content="/images/icons/jukeboxai-512x512.png" />
+    <meta name="author" content="Peter Örneholm (@("@PeterOrneholm"))">
+
+    <!-- Webapp -->
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <!-- Icons -->
+    <link rel="apple-touch-icon" sizes="180x180" href="/images/icons/jukeboxai-180x180.png" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/images/icons/jukeboxai-32x32.png" />
+    <link rel="icon" type="image/png" sizes="16x16" href="/images/icons/jukeboxai-16x16.png" />
+    <link rel="shortcut icon" href="/images/icons/favicon.ico" />
+
+    <!-- Styles -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://pro.fontawesome.com/releases/v5.12.0/css/all.css" integrity="sha384-ekOryaXPbeCpWQNxMwSWVvQ0+1VrStoPJq54shlYhR8HzQgig1v5fas6YgOqLoKz" crossorigin="anonymous">
+
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+
+    @if (!string.IsNullOrWhiteSpace(GoogleAnalyticsOptions.Value.GoogleAnalyticsKey))
+    {
+        <!-- Global site tag (gtag.js) - Google Analytics -->
+        <script async src="https://www.googletagmanager.com/gtag/js?id=@(GoogleAnalyticsOptions.Value.GoogleAnalyticsKey)"></script>
+        <script>
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+
+            gtag('config', '@GoogleAnalyticsOptions.Value.GoogleAnalyticsKey');
+        </script>
+    }
+
+    <!-- Application Insights -->
+    @Html.Raw(JavaScriptSnippet.FullScript)
+</head>
+<body>
+    <!-- Facebook -->
+    <div id="fb-root"></div>
+    <script>
+        (function (d, s, id) {
+            var js, fjs = d.getElementsByTagName(s)[0];
+            if (d.getElementById(id)) return;
+            js = d.createElement(s);
+            js.id = id;
+            js.src = "https://connect.facebook.net/en_US/sdk.js#xfbml=1&version=v3.0";
+            fjs.parentNode.insertBefore(js, fjs);
+        }(document, 'script', 'facebook-jssdk'));
+    </script>
+
+    <!-- Body -->
+    @RenderBody()
+
+    <!-- Scripts -->
+    @RenderSection("Scripts", required: false)
+    <script src="~/js/site.js" asp-append-version="true"></script>
+</body>
+</html>
