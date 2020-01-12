@@ -68,14 +68,10 @@
     <script>
         (function(window) {
             window.jukeboxai = {
-                config: @Html.Raw(JsonSerializer.Serialize(AiJukeboxOptions.Value, jsonSerializerOptions)),
-                keys: {
-                    spotifyBearerToken: '@Model.SpotifyBearerToken'
-                }
+                config: @Html.Raw(JsonSerializer.Serialize(AiJukeboxOptions.Value, jsonSerializerOptions))
             };
         }(this));
     </script>
-}
 
-<script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
-        }
+    <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+}

@@ -18,15 +18,9 @@ namespace Orneholm.AIJukebox.Web.Controllers
         }
 
         //[ResponseCache(Duration = 300, Location = ResponseCacheLocation.Any)]
-        public async Task<ActionResult<HomeIndexViewModel>> Index()
+        public ActionResult<HomeIndexViewModel> Index()
         {
-            var spotifyToken = await _credentialsAuth.GetToken();
-            var viewModel = new HomeIndexViewModel
-            {
-                SpotifyBearerToken = spotifyToken.AccessToken
-            };
-
-            return View(viewModel);
+            return View();
         }
     }
 }

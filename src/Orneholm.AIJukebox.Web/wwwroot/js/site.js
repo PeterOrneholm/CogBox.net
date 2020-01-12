@@ -1,8 +1,8 @@
-(function () {
+(function (window) {
     'use strict';
 
-    var config = jukeboxai.config;
-    var keys = jukeboxai.keys;
+    var config = window.jukeboxai.config;
+    var keys = window.jukeboxai.keys;
 
     var audio = null;
     var fadeAudio;
@@ -45,18 +45,24 @@
                 audio.volume = 0;
                 var fadePoint = audio.duration - 2;
                 fadeAudio = setInterval(function () {
-                    if ((audio.currentTime <= 2) && (audio.volume < 1.0)) {
-                        audio.volume += 0.1;
+                    if (audio.currentTime <= 2) {
+                        setAudioVolume(audio, 0.1);
                     }
-                    if ((audio.currentTime >= fadePoint) && (audio.volume !== 0.0)) {
-                        audio.volume -= 0.1;
+                    if (audio.currentTime >= fadePoint) {
+                        setAudioVolume(audio, -0.1);
                     }
-                    if (audio.volume === 0.0) {
+
+                    if (audio.volume <= 0.0) {
                         clearInterval(fadeAudio);
                     }
                 }, 200);
             }
         });
+    }
+
+    function setAudioVolume(audio, volumeDiff) {
+        var newVolume = audio.volume + volumeDiff;
+        audio.volume = Math.min(1.0, Math.max(0.0, newVolume));
     }
 
     function getRandomFromArray(items) {
@@ -112,84 +118,42 @@
         return getImageAnalyze(blob);
     }
 
-    function getTrack(query) {
-        return fetch('https://api.spotify.com/v1/search?type=track&q=' + query, {
-            headers: {
-                'Authorization': 'Bearer ' + keys.spotifyBearerToken
-            }
-        })
-            .then(function (r) { return r.json(); })
-            .then(function (data) {
-                if (data.tracks.length === 0) {
-                    return null;
-                }
-                var nonExplicitItems = data.tracks.items.filter(x => !x.explicit);
-                return getRandomFromArray(nonExplicitItems);
-            });
-    }
-
-    function getRelevantTag(tags) {
-        if (!tags || tags.length === 0) {
-            return null;
-        }
-
-        var relevantTags = tags.filter(function (t) {
-            return config.irrelevantTags.indexOf(t) === -1;
-        });
-
-        if (relevantTags.length > 3) {
-            relevantTags = relevantTags.slice(1, 3);
-        }
-
-        return getRandomFromArray(relevantTags) || getRandomFromArray(tags);
-    }
-
-    function showMusic(tags, relevantTag) {
+    function showMusic(music) {
         var element = document.querySelector('#analyze-music');
-        if (!relevantTag) {
+        if (!music.trackName) {
             element.innerText = '';
-            return;
         }
-        var query = relevantTag;
 
-        getTrack(query).then(function (track) {
-            if (!track) {
-                element.innerText = '';
-            }
+        document.body.classList.add('activated');
 
-            document.body.classList.add('activated');
+        var progress = document.createElement('div');
+        progress.classList.add('song-progress');
 
-            var artist = track.artists[0].name;
+        var label = document.createElement('div');
+        label.innerText = music.trackName + ' by ' + music.artistName;
+        label.appendChild(progress);
 
-            var progress = document.createElement('div');
-            progress.classList.add('song-progress');
+        var image = document.createElement('img');
+        image.src = music.albumCoverUrl;
+        image.classList.add('embed-responsive-item');
 
-            var label = document.createElement('div');
-            label.innerText = track.name + ' by ' + artist;
-            label.appendChild(progress);
+        element.innerText = '';
+        element.appendChild(image);
+        element.appendChild(label);
 
-            var image = document.createElement('img');
-            image.src = track.album.images[0].url;
-            image.classList.add('embed-responsive-item');
+        var suffix = getNextQuote();
 
-            element.innerText = '';
-            element.appendChild(image);
-            element.appendChild(label);
+        function onProgress(percentage) {
+            progress.style.width = Math.min(100, percentage * 100) + '%';
+        }
 
-            var suffix = getNextQuote();
-
-            function onProgress(percentage) {
-                progress.style.width = Math.min(100, percentage * 100) + '%';
-            }
-
-            stopSound();
-            speak('I found ' + relevantTag + ' in the picture. I will play ' + track.name + ' by ' + artist + '. ' + suffix).then(function () {
-                playSound(track.preview_url, true, onProgress).then(function () {
-                    document.body.classList.remove('activated');
-                    setTimeout(function () {
-                        initAnalyze();
-                    }, 1250);
-                });
+        stopSound();
+        speak('I found something in the picture. I will play ' + music.trackName + ' by ' + music.artistName + '. ' + suffix).then(function () {
+            playSound(music.trackAudioPreviewUrl, true, onProgress).then(function () {
+                document.body.classList.remove('activated');
+                setTimeout(function () {
+                    initAnalyze();
+                }, 1250);
             });
         });
     }
@@ -210,26 +174,22 @@
         });
     }
 
-    function showAnalyzeResult(caption, tags, relevantTag) {
+    function showAnalyzeResult(image, music) {
         var element = document.querySelector('#analyze-tags');
         var list = document.createElement('ul');
         list.classList.add('list-unstyled');
         list.classList.add('clearfix');
-        tags.forEach(function (t) {
+        image.tags.forEach(function (t) {
             var tagElement = document.createElement('li');
             tagElement.innerText = t;
             tagElement.classList.add('badge');
-            if (relevantTag === t) {
-                tagElement.classList.add('badge-primary');
-            } else {
-                tagElement.classList.add('badge-default');
-            }
+            tagElement.classList.add('badge-default');
             list.appendChild(tagElement);
         });
         element.innerText = '';
         element.appendChild(list);
 
-        showMusic(tags, relevantTag);
+        showMusic(music);
     }
 
     function showTakePhoto() {
@@ -252,11 +212,22 @@
         var video = document.querySelector('#videopreview');
         showTakePhoto();
         analyzeVideoFrame(video).then(function (result) {
-            console.log('Image analyze', result);
-            var caption = result.description;
-            var tags = result.relevantTags;
-            var relevantTag = getRelevantTag(tags);
-            showAnalyzeResult(caption, tags, relevantTag);
+            console.log('Image analyzed', result);
+
+            showAnalyzeResult({
+                description: result.imageDescription,
+                tags: result.imageTags
+            }, {
+                albumName: result.albumName,
+                albumReleaseYear: result.albumReleaseYear,
+                albumCoverUrl: result.albumCoverUrl,
+
+                artistName: result.artistName,
+
+                trackName: result.trackName,
+                trackAudioPreviewUrl: result.trackAudioPreviewUrl,
+                trackSpotifyUrl: result.trackSpotifyUrl,
+            });
         });
     }
 
@@ -295,4 +266,4 @@
     }
 
     init();
-}());
+}(window));

@@ -7,6 +7,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Orneholm.AIJukebox.Web.Models;
+using SpotifyAPI.Web;
 using SpotifyAPI.Web.Auth;
 
 namespace Orneholm.AIJukebox.Web
@@ -39,6 +40,17 @@ namespace Orneholm.AIJukebox.Web
             });
 
             services.AddTransient(x => new CredentialsAuth(Configuration["Spotify:ClientId"], Configuration["Spotify:ClientSecret"]));
+
+            services.AddTransient<SpotifyWebAPI>(x =>
+            {
+                var auth = x.GetRequiredService<CredentialsAuth>();
+                var token = auth.GetToken().GetAwaiter().GetResult();
+                return new SpotifyWebAPI
+                {
+                    AccessToken = token.AccessToken,
+                    TokenType = token.TokenType
+                };
+            });
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
