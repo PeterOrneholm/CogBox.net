@@ -11,34 +11,43 @@
     };
 }
 
-<div class="jai-page-wrapper">
+<div class="cb-page-wrapper">
     <div class="container">
         <div class="text-center">
-            <h1>AI Jukebox</h1>
+            <h1>Cognitive Jukebox</h1>
         </div>
-        <div class="row">
-            <div class="col-md-6 order-md-2">
-                <div class="img-thumbnail" id="song">
-                    <div class="embed-responsive embed-responsive-4by3" id="analyze-music">
+        <div id="cb-root">
+            <div class="row">
+                <div class="col-md-6 order-md-2">
+
+                    <div class="cb-song-wrapper img-thumbnail">
+                        <div class="cb-song-embed embed-responsive embed-responsive-4by3">
+                            <img class="cb-song-image embed-responsive-item" />
+                            <div class="cb-song-description"></div>
+                            <div class="cb-song-progress"></div>
+                        </div>
                     </div>
+
                 </div>
-            </div>
-            <div class="col-md-6  order-md-1">
-                <div class="img-thumbnail" id="camera">
-                    <div class="embed-responsive embed-responsive-4by3" style="position: relative;">
-                        <video id="videopreview" class="embed-responsive-item"></video>
-                        <div id="analyze-tags"></div>
+                <div class="col-md-6 order-md-1">
+
+                    <div class="cb-webcam-wrapper img-thumbnail">
+                        <div class="cb-webcam-embed embed-responsive embed-responsive-4by3">
+                            <video class="cb-webcam-video embed-responsive-item"></video>
+                            <div class="cb-webcam-description"></div>
+                        </div>
+                        <div class="cb-webcam-start">
+                            <i class="fa fa-camera-retro fa-5x"></i>
+                        </div>
                     </div>
-                    <div id="camera-start">
-                        <i class="fa fa-camera-retro fa-5x"></i>
-                    </div>
+
                 </div>
             </div>
         </div>
     </div>
 </div>
 
-<footer class="jai-footer">
+<footer class="cb-footer">
     <div class="container">
         <div class="row">
             <div class="col-sm-4">
@@ -58,8 +67,8 @@
                 </p>
             </div>
         </div>
-        <p class="jai-footer-sitename">
-            Jukebox.ai
+        <p class="cb-footer-sitename">
+            CogBox.net
         </p>
     </div>
 </footer>

@@ -22,18 +22,15 @@ h1 {
 
 /* Main */
 
-.jai-page-wrapper {
+.cb-page-wrapper {
     background-color: #008bc3;
     padding: 30px 0;
     height: 90vh;
 }
 
-.jai-main {
-}
-
 /* Footer */
 
-.jai-footer {
+.cb-footer {
     font-size: 0.85em;
     text-align: left;
     color: #fafafa;
@@ -41,23 +38,27 @@ h1 {
     padding: 30px 0;
 }
 
-    .jai-footer a {
+    .cb-footer a {
         color: #fafafa;
         text-decoration: underline;
     }
 
-        .jai-footer a:hover {
+        .cb-footer a:hover {
             color: #f0f0f0;
         }
 
-.jai-footer-sitename {
+.cb-footer-sitename {
     margin-top: 20px;
     text-align: center;
 }
 
+/* Common */
 
-/* Jukebox */
+.cb-webcam-wrapper, .cb-song-wrapper {
+    transition: all 1s ease;
+}
 
+/* Webcam */
 
 @keyframes flash {
     0%, 100% {
@@ -69,45 +70,85 @@ h1 {
     }
 }
 
-video {
-    background-color: #fff;
-    -webkit-animation-duration: 0.5s;
-    animation-duration: 0.5s;
-    -webkit-animation-fill-mode: both;
-    animation-fill-mode: both;
-}
-
-.flash {
+.cb-webcam-flash {
     animation-name: flash;
 }
 
-#analyze-tags {
+.cb-webcam-wrapper {
+    transform: rotate(0) translate(300px, 50px) scale(1.2);
+    cursor: pointer;
+    background-color: #fff;
+    animation-duration: 0.5s;
+    animation-fill-mode: both;
+}
+
+.cb-activated .cb-webcam-wrapper {
+    transform: rotate(-3deg) translate(0, 50px) scale(1.0);
+}
+
+.cb-webcam-wrapper .cb-webcam-embed {
+    position: relative;
+}
+
+.cb-webcam-wrapper .cb-webcam-description {
     position: absolute;
     bottom: 0;
     left: 0;
     right: 0;
-    background-color: rgba(255, 255, 255, 0.6);
+
+    padding: 10px 10px 15px 10px;
+    background-color: rgba(255, 255, 255, 0.8);
+    color: #000;
+    font-size: 20px;
     text-align: center;
-    -webkit-transition: transform 1s;
-    -moz-transition: transform 1s;
+
     transition: transform 1s;
     transform: translateY(98%);
 }
 
-.activated #analyze-tags {
+.cb-activated .cb-webcam-description {
     transform: translateY(0);
 }
 
-#analyze-tags ul {
-    margin: 10px;
+.cb-webcam-wrapper .cb-webcam-start {
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: #fff;
+    transition: all 0.4s;
+    opacity: 0.7;
 }
 
-    #analyze-tags ul li {
-        float: left;
-        margin: 3px 5px;
-    }
+.cb-activated .cb-webcam-start {
+    opacity: 0;
+}
 
-#analyze-music > div {
+.cb-webcam-wrapper:hover .cb-webcam-start {
+    transform: scale(1.2);
+    opacity: 1;
+}
+
+.cb-webcam-flash.cb-webcam-wrapper .cb-webcam-start {
+    transform: scale(2) rotate(10deg) !important;
+    color: #F78B1D;
+}
+
+/* Song */
+
+.cb-song-wrapper {
+    transform: rotate(0) translate(0, -1000px);
+}
+
+.cb-activated .cb-song-wrapper {
+    transform: rotate(4deg) translate(-30px, 50px);
+}
+
+.cb-song-wrapper .cb-song-embed .cb-song-description {
     position: absolute;
     bottom: 0;
     left: 0;
@@ -119,64 +160,11 @@ video {
     text-align: center;
 }
 
-    #analyze-music > div > .song-progress {
-        position: absolute;
-        bottom: 0;
-        left: 0;
-        height: 5px;
-        width: 0%;
-        background-color: rgba(247, 139, 29, 0.8);
-    }
-
-#camera, #song {
-    -webkit-transition: all 1s ease;
-    -moz-transition: all 1s ease;
-    transition: all 1s ease;
-}
-
-#camera {
-    transform: rotate(0) translate(300px, 50px) scale(1.2);
-    cursor: pointer;
-}
-
-#song {
-    transform: rotate(0) translate(0, -1000px);
-}
-
-.activated #camera {
-    transform: rotate(-3deg) translate(0, 50px) scale(1.0);
-}
-
-.activated #song {
-    transform: rotate(4deg) translate(-30px, 50px);
-}
-
-#camera-start {
+.cb-song-wrapper .cb-song-embed .cb-song-progress {
     position: absolute;
-    top: 0;
-    left: 0;
     bottom: 0;
-    right: 0;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    color: #fff;
-    -webkit-transition: all 0.4s;
-    -moz-transition: all 0.4s;
-    transition: all 0.4s;
-    opacity: 0.7;
-}
-
-.activated #camera-start {
-    opacity: 0;
-}
-
-#camera:hover #camera-start {
-    transform: scale(1.2);
-    opacity: 1;
-}
-
-.flash #camera-start {
-    transform: scale(2) rotate(10deg) !important;
-    color: #F78B1D;
+    left: 0;
+    height: 5px;
+    width: 0%;
+    background-color: rgba(247, 139, 29, 0.8);
 }

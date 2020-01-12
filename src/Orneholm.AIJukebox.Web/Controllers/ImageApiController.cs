@@ -48,25 +48,31 @@ namespace Orneholm.AIJukebox.Web.Controllers
             var tag = tags.First();
 
             var tracks = await GetTopRatedTracks(tag);
-            var track = tracks.FirstOrDefault();
 
             var viewModel = new ImageAnalyzeResult
             {
                 ImageDescription = MakeSentence(caption),
-                ImageTags = tags,
 
-                ArtistName = track?.Artists.FirstOrDefault()?.Name ?? string.Empty,
-
-                AlbumName = track?.Album.Name ?? string.Empty,
-                AlbumCoverUrl = track?.Album.Images.FirstOrDefault()?.Url ?? string.Empty,
-                AlbumReleaseYear = ParseAlbumReleaseYear(track?.Album.ReleaseDate),
-
-                TrackAudioPreviewUrl = track?.PreviewUrl ?? string.Empty,
-                TrackName = track?.Name ?? string.Empty,
-                TrackSpotifyUrl = track?.ExternUrls["spotify"] ?? string.Empty
+                MusicTracks = tracks.Select(FullTrackToMusicTrack).Take(5).ToList()
             };
 
             return viewModel;
+        }
+
+        private MusicTrack FullTrackToMusicTrack(FullTrack fullTrack)
+        {
+            return new MusicTrack
+            {
+                ArtistName = fullTrack.Artists.FirstOrDefault()?.Name ?? string.Empty,
+
+                AlbumName = fullTrack.Album.Name ?? string.Empty,
+                AlbumCoverUrl = fullTrack.Album.Images.FirstOrDefault()?.Url ?? string.Empty,
+                AlbumReleaseYear = ParseAlbumReleaseYear(fullTrack.Album.ReleaseDate),
+
+                TrackAudioPreviewUrl = fullTrack.PreviewUrl ?? string.Empty,
+                TrackName = fullTrack.Name ?? string.Empty,
+                TrackSpotifyUrl = fullTrack.ExternUrls["spotify"] ?? string.Empty
+            };
         }
 
         private static int? ParseAlbumReleaseYear(string? releaseDate)

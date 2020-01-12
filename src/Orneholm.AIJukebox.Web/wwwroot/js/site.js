@@ -2,11 +2,130 @@
     'use strict';
 
     var config = window.jukeboxai.config;
-    var keys = window.jukeboxai.keys;
+    var cbRoot = document.querySelector('#cb-root');
 
     var audio = null;
     var fadeAudio;
     var quoteIndex = 0;
+
+    init();
+
+    function init() {
+        var webcamWrapperElement = cbRoot.querySelector('.cb-webcam-wrapper');
+        var videoElement = cbRoot.querySelector('.cb-webcam-video');
+
+        webcamWrapperElement.addEventListener('click', function (e) {
+            stopSound();
+            if (cbRoot.classList.contains('cb-activated')) {
+                cbRoot.classList.remove('cb-activated');
+                setTimeout(function () {
+                    initAnalyze();
+                }, 1200);
+            } else {
+                initAnalyze();
+            }
+        });
+
+        initCamera(videoElement);
+    }
+
+    function initCamera(videoElement) {
+        return new Promise(function (resolve, reject) {
+            navigator.mediaDevices.getUserMedia({
+                audio: false,
+                video: true
+            }).then(function (mediaStream) {
+                videoElement.srcObject = mediaStream;
+                videoElement.addEventListener('loadedmetadata', function (e) {
+                    videoElement.play();
+                    window.setTimeout(function () {
+                        resolve();
+                    }, 500);
+                });
+            });
+        });
+    }
+
+    function initAnalyze() {
+        var videoElement = cbRoot.querySelector('.cb-webcam-video');
+        showTakePhoto();
+        analyzeVideoFrame(videoElement).then(function (result) {
+            console.log('Webcam image analyzed', result);
+
+            showAnalyzeResult({
+                description: result.imageDescription
+            }, result.musicTracks);
+        });
+    }
+
+    function showTakePhoto() {
+        var webcamWrapperElement = cbRoot.querySelector('.cb-webcam-wrapper');
+        var videoElement = cbRoot.querySelector('.cb-webcam-video');
+
+        if (config.shutterSoundUrl) {
+            playSound(config.shutterSoundUrl);
+        }
+        webcamWrapperElement.classList.add('cb-webcam-flash');
+        videoElement.classList.add('cb-webcam-flash');
+
+        setTimeout(function () {
+            webcamWrapperElement.classList.remove('cb-webcam-flash');
+            videoElement.classList.remove('cb-webcam-flash');
+        }, 700);
+    }
+
+    function analyzeVideoFrame(video) {
+        var blob = videoToBlob(video);
+        return getImageAnalyze(blob);
+    }
+
+    function getImageAnalyze(blob) {
+        var formData = new FormData();
+        formData.append('file', blob);
+
+        return fetch(config.apiBaseUrl + 'image/analyze', {
+            method: 'POST',
+            body: formData
+        }).then(function (data) {
+            return data.json();
+        });
+    }
+
+    function showMusic(musicTracks) {
+        var musicTrack = musicTracks[0];
+        var songImageElement = cbRoot.querySelector('.cb-song-image');
+        var songDescriptionElement = cbRoot.querySelector('.cb-song-description');
+        var songProgressElement = cbRoot.querySelector('.cb-song-progress');
+
+        cbRoot.classList.add('cb-activated');
+
+        songDescriptionElement.innerText = musicTrack.trackName + ' by ' + musicTrack.artistName;
+        songImageElement.src = musicTrack.albumCoverUrl;
+        songProgressElement.style.width = 0;
+
+        var suffix = getNextQuote();
+
+        function onProgress(percentage) {
+            songProgressElement.style.width = Math.min(100, percentage * 100) + '%';
+        }
+
+        stopSound();
+        speak('I found something in the picture. I will play ' + musicTrack.trackName + ' by ' + musicTrack.artistName + '. ' + suffix).then(function () {
+            playSound(musicTrack.trackAudioPreviewUrl, true, onProgress).then(function () {
+                cbRoot.classList.remove('cb-activated');
+                setTimeout(function () {
+                    initAnalyze();
+                }, 1250);
+            });
+        });
+    }
+
+    function showAnalyzeResult(image, musicTracks) {
+        var descriptionElement = cbRoot.querySelector('.cb-webcam-description');
+        descriptionElement.innerText = image.description;
+
+        showMusic(musicTracks);
+    }
 
     function getNextQuote() {
         var quote = config.quotes[quoteIndex % config.quotes.length];
@@ -14,9 +133,27 @@
         return quote;
     }
 
+    /* Helpers */
+
+    function speak(text) {
+        return new Promise(function (resolve, reject) {
+            if (!window.speechSynthesis || !SpeechSynthesisUtterance) {
+                console.log(text);
+                resolve();
+                return;
+            }
+
+            var message = new SpeechSynthesisUtterance(text);
+            message.onend = function (e) {
+                resolve();
+            };
+            window.speechSynthesis.speak(message);
+        });
+    }
+
     function stopSound() {
         audio = audio || document.createElement('audio');
-        document.body.appendChild(audio);
+        cbRoot.appendChild(audio);
         audio.pause();
         audio.currentTime = 0;
         audio.volume = 1;
@@ -65,14 +202,6 @@
         audio.volume = Math.min(1.0, Math.max(0.0, newVolume));
     }
 
-    function getRandomFromArray(items) {
-        if (!items || items.length === 0) {
-            return null;
-        }
-
-        return items[Math.floor(Math.random() * items.length)];
-    }
-
     function videoToImageDataURI(video) {
         var canvas = document.createElement("canvas");
         canvas.width = video.videoWidth;
@@ -100,170 +229,4 @@
         var blob = dataURItoBlob(dataURI, 'image/png');
         return blob;
     }
-
-    function getImageAnalyze(blob) {
-        var formData = new FormData();
-        formData.append('file', blob);
-
-        return fetch(config.apiBaseUrl + 'image/analyze', {
-            method: 'POST',
-            body: formData
-        }).then(function (data) {
-            return data.json();
-        });
-    }
-
-    function analyzeVideoFrame(video) {
-        var blob = videoToBlob(video);
-        return getImageAnalyze(blob);
-    }
-
-    function showMusic(music) {
-        var element = document.querySelector('#analyze-music');
-        if (!music.trackName) {
-            element.innerText = '';
-        }
-
-        document.body.classList.add('activated');
-
-        var progress = document.createElement('div');
-        progress.classList.add('song-progress');
-
-        var label = document.createElement('div');
-        label.innerText = music.trackName + ' by ' + music.artistName;
-        label.appendChild(progress);
-
-        var image = document.createElement('img');
-        image.src = music.albumCoverUrl;
-        image.classList.add('embed-responsive-item');
-
-        element.innerText = '';
-        element.appendChild(image);
-        element.appendChild(label);
-
-        var suffix = getNextQuote();
-
-        function onProgress(percentage) {
-            progress.style.width = Math.min(100, percentage * 100) + '%';
-        }
-
-        stopSound();
-        speak('I found something in the picture. I will play ' + music.trackName + ' by ' + music.artistName + '. ' + suffix).then(function () {
-            playSound(music.trackAudioPreviewUrl, true, onProgress).then(function () {
-                document.body.classList.remove('activated');
-                setTimeout(function () {
-                    initAnalyze();
-                }, 1250);
-            });
-        });
-    }
-
-    function speak(text) {
-        return new Promise(function (resolve, reject) {
-            if (!window.speechSynthesis || !SpeechSynthesisUtterance) {
-                console.log(text);
-                resolve();
-                return;
-            }
-
-            var message = new SpeechSynthesisUtterance(text);
-            message.onend = function (e) {
-                resolve();
-            };
-            window.speechSynthesis.speak(message);
-        });
-    }
-
-    function showAnalyzeResult(image, music) {
-        var element = document.querySelector('#analyze-tags');
-        var list = document.createElement('ul');
-        list.classList.add('list-unstyled');
-        list.classList.add('clearfix');
-        image.tags.forEach(function (t) {
-            var tagElement = document.createElement('li');
-            tagElement.innerText = t;
-            tagElement.classList.add('badge');
-            tagElement.classList.add('badge-default');
-            list.appendChild(tagElement);
-        });
-        element.innerText = '';
-        element.appendChild(list);
-
-        showMusic(music);
-    }
-
-    function showTakePhoto() {
-        var video = document.querySelector('#videopreview');
-        var camera = document.querySelector('#camera');
-
-        if (config.shutterSoundUrl) {
-            playSound(config.shutterSoundUrl);
-        }
-        video.classList.add('flash');
-        camera.classList.add('flash');
-
-        setTimeout(function () {
-            video.classList.remove('flash');
-            camera.classList.remove('flash');
-        }, 700);
-    }
-
-    function initAnalyze() {
-        var video = document.querySelector('#videopreview');
-        showTakePhoto();
-        analyzeVideoFrame(video).then(function (result) {
-            console.log('Image analyzed', result);
-
-            showAnalyzeResult({
-                description: result.imageDescription,
-                tags: result.imageTags
-            }, {
-                albumName: result.albumName,
-                albumReleaseYear: result.albumReleaseYear,
-                albumCoverUrl: result.albumCoverUrl,
-
-                artistName: result.artistName,
-
-                trackName: result.trackName,
-                trackAudioPreviewUrl: result.trackAudioPreviewUrl,
-                trackSpotifyUrl: result.trackSpotifyUrl,
-            });
-        });
-    }
-
-    function initCamera(video) {
-        return new Promise(function (resolve, reject) {
-            navigator.mediaDevices.getUserMedia({
-                audio: false,
-                video: true
-            }).then(function (mediaStream) {
-                video.srcObject = mediaStream;
-                video.addEventListener('loadedmetadata', function (e) {
-                    video.play();
-                    window.setTimeout(function () {
-                        resolve();
-                    }, 500);
-                });
-            });
-        });
-    }
-
-    function init() {
-        var video = document.querySelector('#videopreview');
-        var camera = document.querySelector('#camera');
-        camera.addEventListener('click', function (e) {
-            stopSound();
-            if (document.body.classList.contains('activated')) {
-                document.body.classList.remove('activated');
-                setTimeout(function () {
-                    initAnalyze();
-                }, 1200);
-            } else {
-                initAnalyze();
-            }
-        });
-        initCamera(video);
-    }
-
-    init();
 }(window));
