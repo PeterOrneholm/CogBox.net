@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-namespace Orneholm.AIJukebox.Web.Models
+namespace Orneholm.CognitiveJukebox.Web.Models
 {
     public class ImageAnalyzeResult
     {

@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Hosting;
 
-namespace Orneholm.AIJukebox.Web
+namespace Orneholm.CognitiveJukebox.Web
 {
     public class Program
     {

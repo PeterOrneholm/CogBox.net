@@ -2,7 +2,7 @@ using Microsoft.ApplicationInsights.Channel;
 using Microsoft.ApplicationInsights.Extensibility;
 using Microsoft.AspNetCore.Http;
 
-namespace Orneholm.AIJukebox.Web
+namespace Orneholm.CognitiveJukebox.Web
 {
     public class ExcludeHealthDependencyFilter : ITelemetryProcessor
     {

@@ -1,4 +1,4 @@
-namespace Orneholm.AIJukebox.Web.Models
+namespace Orneholm.CognitiveJukebox.Web.Models
 {
     public class MusicTrack
     {

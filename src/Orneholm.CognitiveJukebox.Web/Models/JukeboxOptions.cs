@@ -1,8 +1,8 @@
 using System.Collections.Generic;
 
-namespace Orneholm.AIJukebox.Web.Models
+namespace Orneholm.CognitiveJukebox.Web.Models
 {
-    public class AiJukeboxOptions
+    public class JukeboxOptions
     {
         public string ApiBaseUrl { get; set; } = string.Empty;
         public string ShutterSoundUrl { get; set; } = string.Empty;

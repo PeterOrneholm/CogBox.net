@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.StaticFiles;
@@ -6,11 +5,11 @@ using Microsoft.Azure.CognitiveServices.Vision.ComputerVision;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Orneholm.AIJukebox.Web.Models;
+using Orneholm.CognitiveJukebox.Web.Models;
 using SpotifyAPI.Web;
 using SpotifyAPI.Web.Auth;
 
-namespace Orneholm.AIJukebox.Web
+namespace Orneholm.CognitiveJukebox.Web
 {
     public class Startup
     {
@@ -32,7 +31,7 @@ namespace Orneholm.AIJukebox.Web
             services.AddApplicationInsightsTelemetryProcessor<ExcludeHealthDependencyFilter>();
 
             services.Configure<GoogleAnalyticsOptions>(Configuration);
-            services.Configure<AiJukeboxOptions>(Configuration);
+            services.Configure<JukeboxOptions>(Configuration);
 
             services.AddTransient<IComputerVisionClient>(x => new ComputerVisionClient(new ApiKeyServiceClientCredentials(Configuration["AzureComputerVision:SubscriptionKey"]))
             {

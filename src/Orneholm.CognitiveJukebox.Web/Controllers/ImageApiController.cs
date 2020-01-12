@@ -7,12 +7,12 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.CognitiveServices.Vision.ComputerVision;
 using Microsoft.Azure.CognitiveServices.Vision.ComputerVision.Models;
-using Orneholm.AIJukebox.Web.Models;
+using Orneholm.CognitiveJukebox.Web.Models;
 using SpotifyAPI.Web;
 using SpotifyAPI.Web.Enums;
 using SpotifyAPI.Web.Models;
 
-namespace Orneholm.AIJukebox.Web.Controllers
+namespace Orneholm.CognitiveJukebox.Web.Controllers
 {
     [ApiController]
     [Route("api/image/")]

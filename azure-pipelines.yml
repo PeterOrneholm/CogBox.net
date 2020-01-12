@@ -4,7 +4,7 @@ name: $(Date:yyyyMMdd)$(Rev:r)
 
 variables:
   vmImage: 'ubuntu-latest'
-  dockerImageName: 'orneholmaijukeboxweb'
+  dockerImageName: 'orneholmcognitivejukeboxweb'
   dockerImageTag: $(Build.BuildNumber)
 
 trigger:
@@ -41,8 +41,8 @@ stages:
       inputs:
         command: buildAndPush
         buildContext: ''
-        repository: peterorneholm/orneholmaijukeboxweb
-        Dockerfile: src/Orneholm.AIJukebox.Web/Dockerfile
+        repository: peterorneholm/orneholmcognitivejukeboxweb
+        Dockerfile: src/Orneholm.CognitiveJukebox.Web/Dockerfile
         tags: |
           $(dockerImageTag)
 

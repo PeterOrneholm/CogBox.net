@@ -1,10 +1,9 @@
-using System.Threading.Tasks;
 using Microsoft.ApplicationInsights;
 using Microsoft.AspNetCore.Mvc;
-using Orneholm.AIJukebox.Web.Models;
+using Orneholm.CognitiveJukebox.Web.Models;
 using SpotifyAPI.Web.Auth;
 
-namespace Orneholm.AIJukebox.Web.Controllers
+namespace Orneholm.CognitiveJukebox.Web.Controllers
 {
     public class HomeController : Controller
     {

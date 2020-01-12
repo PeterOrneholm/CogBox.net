@@ -9,7 +9,7 @@
         <NeutralLanguage>en</NeutralLanguage>
         <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
 
-        <Description>Control Spotify through Computer Vision</Description>
+        <Description>A jukebox enhanced with cognitive skills</Description>
 
         <Authors>Peter Örneholm</Authors>
         <Company>Orneholm AB</Company>

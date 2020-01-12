@@ -1,12 +1,12 @@
 {
     "dir": "ltr",
     "lang": "en-US",
-    "name": "Jukebox.ai",
+    "name": "CogBox.net - Cognitive Jukebox",
     "display": "minimal-ui",
     "start_url": "https://jukebox.ai/",
-    "short_name": "Jukebox.ai",
+    "short_name": "CogBox.net",
     "theme_color": "#008bc3",
-    "description": "Control Spotify through Computer Vision",
+    "description": "Cognitive Jukebox - A jukebox enhanced with cognitive skills",
     "orientation": "any",
     "background_color": "#008bc3",
     "icons": [
@@ -15,15 +15,15 @@
             "sizes": "48x48 32x32 16x16"
         },
         {
-            "src": "/images/icons/jukeboxai-180x180.png",
+            "src": "/images/icons/cogbox-180x180.png",
             "sizes": "180x180"
         },
         {
-            "src": "/images/icons/jukeboxai-32x32.png",
+            "src": "/images/icons/cogbox-32x32.png",
             "sizes": "32x32"
         },
         {
-            "src": "/images/icons/jukeboxai-16x16.png",
+            "src": "/images/icons/cogbox-16x16.png",
             "sizes": "16x16"
         }
     ],
