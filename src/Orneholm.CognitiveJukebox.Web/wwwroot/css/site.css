@@ -20,10 +20,26 @@ h1 {
     color: #fff;
 }
 
+.cb-header, .cb-header:hover {
+    color: #fafafa;
+}
+
+    .cb-header .cb-header-cog {
+        text-decoration: underline;
+    }
+
+    .cb-header .cb-header-box {
+        text-decoration: underline;
+    }
+
+.cb-header-description {
+    color: #fff;
+}
+
 /* Main */
 
 .cb-page-wrapper {
-    background-color: #008bc3;
+    background-color: #f68b1f;
     padding: 30px 0;
     height: 90vh;
 }
@@ -56,6 +72,7 @@ h1 {
 
 .cb-webcam-wrapper, .cb-song-wrapper {
     transition: all 1s ease;
+    padding: 10px;
 }
 
 /* Webcam */
@@ -95,13 +112,11 @@ h1 {
     bottom: 0;
     left: 0;
     right: 0;
-
     padding: 10px 10px 15px 10px;
     background-color: rgba(255, 255, 255, 0.8);
     color: #000;
     font-size: 20px;
     text-align: center;
-
     transition: transform 1s;
     transform: translateY(98%);
 }
@@ -135,7 +150,7 @@ h1 {
 
 .cb-webcam-flash.cb-webcam-wrapper .cb-webcam-start {
     transform: scale(2) rotate(10deg) !important;
-    color: #F78B1D;
+    color: #008bc3;
 }
 
 /* Song */
