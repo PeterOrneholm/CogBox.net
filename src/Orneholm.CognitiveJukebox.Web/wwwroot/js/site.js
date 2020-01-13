@@ -53,7 +53,9 @@
             console.log('Webcam image analyzed', result);
 
             showAnalyzeResult({
-                description: result.imageDescription
+                description: result.imageDescription,
+                faces: result.faces,
+                musicYear: result.musicYear
             }, result.musicTracks);
         });
     }
@@ -91,7 +93,7 @@
         });
     }
 
-    function showMusic(musicTracks) {
+    function showMusic(face, musicYear, musicTracks) {
         var musicTrack = musicTracks[0];
         var songImageElement = cbRoot.querySelector('.cb-song-image');
         var songDescriptionElement = cbRoot.querySelector('.cb-song-description');
@@ -103,14 +105,17 @@
         songImageElement.src = musicTrack.albumCoverUrl;
         songProgressElement.style.width = 0;
 
-        var suffix = getNextQuote();
-
         function onProgress(percentage) {
             songProgressElement.style.width = Math.min(100, percentage * 100) + '%';
         }
 
         stopSound();
-        speak('I found something in the picture. I will play ' + musicTrack.trackName + ' by ' + musicTrack.artistName + '. ' + suffix).then(function () {
+
+        var personDescription = 'According to my AI, you look like ' + face.age + ' years old.';
+        var musicDescription = 'I will play ' + musicTrack.trackName + ' by ' + musicTrack.artistName + ' from ' + musicTrack.albumName + '. A great album from ' + musicYear;
+        var suffix = getNextQuote();
+
+        speak([personDescription, musicDescription, suffix].join(' ')).then(function () {
             playSound(musicTrack.trackAudioPreviewUrl, true, onProgress).then(function () {
                 cbRoot.classList.remove('cb-activated');
                 setTimeout(function () {
@@ -122,9 +127,14 @@
 
     function showAnalyzeResult(image, musicTracks) {
         var descriptionElement = cbRoot.querySelector('.cb-webcam-description');
-        descriptionElement.innerText = image.description;
 
-        showMusic(musicTracks);
+        if (image.faces.length > 0) {
+            descriptionElement.innerText = image.description;
+            var face = image.faces[0];
+            showMusic(face, image.musicYear, musicTracks);
+        } else {
+            descriptionElement.innerText = 'Could not find any face in the picture.';
+        }
     }
 
     function getNextQuote() {

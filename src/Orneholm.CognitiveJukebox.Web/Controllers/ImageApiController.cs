@@ -20,9 +20,8 @@ namespace Orneholm.CognitiveJukebox.Web.Controllers
     {
         private static readonly List<VisualFeatureTypes> VisualFeatures = new List<VisualFeatureTypes>()
         {
-            VisualFeatureTypes.Tags,
             VisualFeatureTypes.Description,
-            VisualFeatureTypes.Objects
+            VisualFeatureTypes.Faces
         };
 
         private readonly TelemetryClient _telemetryClient;
@@ -44,19 +43,33 @@ namespace Orneholm.CognitiveJukebox.Web.Controllers
 
             var caption = GetCaption(analyzeImageResult);
 
-            var tags = GetTags(analyzeImageResult);
-            var tag = tags.First();
+            var faces = analyzeImageResult.Faces.ToList();
+            var face = faces.FirstOrDefault();
+            var year = GetYearFromFace(face);
 
-            var tracks = await GetTopRatedTracks(tag);
+            var tracks = await GetTopRatedTracks(year);
+            var randomTracks = tracks.Take(10).OrderBy(a => Guid.NewGuid()).ToList();
 
             var viewModel = new ImageAnalyzeResult
             {
                 ImageDescription = MakeSentence(caption),
+                Faces = faces,
 
-                MusicTracks = tracks.Select(FullTrackToMusicTrack).Take(5).ToList()
+                MusicYear = year,
+                MusicTracks = randomTracks.Select(FullTrackToMusicTrack).Take(5).ToList()
             };
 
             return viewModel;
+        }
+
+        private int GetYearFromFace(FaceDescription? face)
+        {
+            if (face == null)
+            {
+                return 1991;
+            }
+
+            return DateTime.UtcNow.Year - face.Age;
         }
 
         private MusicTrack FullTrackToMusicTrack(FullTrack fullTrack)
@@ -90,9 +103,9 @@ namespace Orneholm.CognitiveJukebox.Web.Controllers
             return null;
         }
 
-        private async Task<List<FullTrack>> GetTopRatedTracks(string tags)
+        private async Task<List<FullTrack>> GetTopRatedTracks(int year)
         {
-            var trackSearchResult = await _spotifyWebApi.SearchItemsAsync(tags, SearchType.Track, limit: 50);
+            var trackSearchResult = await _spotifyWebApi.SearchItemsAsync($"year:{year:D}", SearchType.Track, limit: 50);
             return trackSearchResult.Tracks
                 .Items
                 .Where(x => !x.Explicit)
@@ -105,23 +118,6 @@ namespace Orneholm.CognitiveJukebox.Web.Controllers
         private static string GetCaption(ImageAnalysis analyzeImageResult)
         {
             return analyzeImageResult.Description.Captions.FirstOrDefault()?.Text ?? string.Empty;
-        }
-
-        private static List<string> GetTags(ImageAnalysis analyzeImageResult)
-        {
-            var tags = new List<string>();
-
-            var tagsWithConfidence = analyzeImageResult.Tags.Where(x => x.Confidence > 0.9)
-                .OrderByDescending(x => x.Confidence)
-                .SelectMany(x => new[] {x.Name, x.Hint});
-            tags.AddRange(tagsWithConfidence);
-
-            var objectsWithConfidence = analyzeImageResult.Objects
-                .Where(x => x.Confidence > 0.9)
-                .Select(x => x.ObjectProperty);
-            tags.AddRange(objectsWithConfidence);
-
-            return tags.Where(x => !string.IsNullOrWhiteSpace(x)).ToList();
         }
 
         private static string Capitalize(string value)
