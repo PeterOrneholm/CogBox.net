@@ -7,17 +7,16 @@ EXPOSE 443
 
 FROM mcr.microsoft.com/dotnet/core/sdk:3.1-buster AS build
 WORKDIR /src
-COPY ["src/Orneholm.AIJukebox.Web/Orneholm.AIJukebox.Web.csproj", "Orneholm.AIJukebox.Web/"]
-COPY ["src/Orneholm.AIJukebox.Core/Orneholm.AIJukebox.Core.csproj", "Orneholm.AIJukebox.Core/"]
-RUN dotnet restore "Orneholm.AIJukebox.Web/Orneholm.AIJukebox.Web.csproj"
+COPY ["src/Orneholm.CognitiveJukebox.Web/Orneholm.CognitiveJukebox.Web.csproj", "Orneholm.CognitiveJukebox.Web/"]
+RUN dotnet restore "Orneholm.CognitiveJukebox.Web/Orneholm.CognitiveJukebox.Web.csproj"
 COPY /src .
-WORKDIR "/src/Orneholm.AIJukebox.Web"
-RUN dotnet build "Orneholm.AIJukebox.Web.csproj" -c Release -o /app/build
+WORKDIR "/src/Orneholm.CognitiveJukebox.Web"
+RUN dotnet build "Orneholm.CognitiveJukebox.Web.csproj" -c Release -o /app/build
 
 FROM build AS publish
-RUN dotnet publish "Orneholm.AIJukebox.Web.csproj" -c Release -o /app/publish
+RUN dotnet publish "Orneholm.CognitiveJukebox.Web.csproj" -c Release -o /app/publish
 
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
-ENTRYPOINT ["dotnet", "Orneholm.AIJukebox.Web.dll"]
+ENTRYPOINT ["dotnet", "Orneholm.CognitiveJukebox.Web.dll"]
