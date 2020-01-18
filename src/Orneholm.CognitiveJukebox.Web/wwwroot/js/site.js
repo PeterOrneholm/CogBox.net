@@ -67,6 +67,8 @@
         if (config.shutterSoundUrl) {
             playSound(config.shutterSoundUrl);
         }
+
+        cbRoot.classList.remove('cb-info');
         webcamWrapperElement.classList.add('cb-webcam-flash');
         videoElement.classList.add('cb-webcam-flash');
 
@@ -112,7 +114,7 @@
         stopSound();
 
         var personDescription = 'According to my AI, you look like ' + face.age + ' years old.';
-        var musicDescription = 'I will play ' + musicTrack.trackName + ' by ' + musicTrack.artistName + ' from ' + musicTrack.albumName + '. A great album from ' + musicYear;
+        var musicDescription = 'I will play ' + musicTrack.trackName + ' by ' + musicTrack.artistName + '. A great album from ' + musicYear;
         var suffix = getNextQuote();
 
         speak([personDescription, musicDescription, suffix].join(' ')).then(function () {
@@ -134,10 +136,15 @@
             showMusic(face, image.musicYear, musicTracks);
         } else {
             descriptionElement.innerText = 'Could not find any face in the picture.';
+            cbRoot.classList.add('cb-info');
         }
     }
 
     function getNextQuote() {
+        if (!config.quotes.length) {
+            return '';
+        }
+
         var quote = config.quotes[quoteIndex % config.quotes.length];
         quoteIndex++;
         return quote;
