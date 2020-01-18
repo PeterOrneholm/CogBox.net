@@ -45,6 +45,7 @@ stages:
         Dockerfile: src/Orneholm.CognitiveJukebox.Web/Dockerfile
         tags: |
           $(dockerImageTag)
+          latest
 
     - publish: '$(Build.ArtifactStagingDirectory)'
       artifact: '$(artifactName)'
