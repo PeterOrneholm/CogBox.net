@@ -7,8 +7,4 @@
 
 ## Todo
 
- - [ ] Icon
- - [ ] Scan person
  - [ ] Mobile
- - [ ] CI
- - [ ] CD
