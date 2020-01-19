@@ -40,7 +40,7 @@ namespace Orneholm.CognitiveJukebox.Web
 
             services.AddTransient(x => new CredentialsAuth(Configuration["Spotify:ClientId"], Configuration["Spotify:ClientSecret"]));
 
-            services.AddTransient<SpotifyWebAPI>(x =>
+            services.AddTransient(x =>
             {
                 var auth = x.GetRequiredService<CredentialsAuth>();
                 var token = auth.GetToken().GetAwaiter().GetResult();

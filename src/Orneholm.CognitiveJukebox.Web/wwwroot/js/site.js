@@ -33,7 +33,9 @@
         return new Promise(function (resolve, reject) {
             navigator.mediaDevices.getUserMedia({
                 audio: false,
-                video: true
+                video: {
+                    facingMode: { exact: "user" }
+                }
             }).then(function (mediaStream) {
                 videoElement.srcObject = mediaStream;
                 videoElement.addEventListener('loadedmetadata', function (e) {
