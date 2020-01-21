@@ -2,10 +2,12 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.StaticFiles;
 using Microsoft.Azure.CognitiveServices.Vision.ComputerVision;
+using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Orneholm.CognitiveJukebox.Web.Models;
+using Orneholm.CognitiveJukebox.Web.Services;
 using SpotifyAPI.Web;
 using SpotifyAPI.Web.Auth;
 
@@ -39,17 +41,8 @@ namespace Orneholm.CognitiveJukebox.Web
             });
 
             services.AddTransient(x => new CredentialsAuth(Configuration["Spotify:ClientId"], Configuration["Spotify:ClientSecret"]));
-
-            services.AddTransient(x =>
-            {
-                var auth = x.GetRequiredService<CredentialsAuth>();
-                var token = auth.GetToken().GetAwaiter().GetResult();
-                return new SpotifyWebAPI
-                {
-                    AccessToken = token.AccessToken,
-                    TokenType = token.TokenType
-                };
-            });
+            services.AddTransient<SpotifyAuthenticatedWebApi>();
+            services.AddTransient<ISpotifySearcher>(provider => new CachedSpotifySearcher(new SpotifySearcher(provider.GetRequiredService<SpotifyAuthenticatedWebApi>()), provider.GetRequiredService<IMemoryCache>()));
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)

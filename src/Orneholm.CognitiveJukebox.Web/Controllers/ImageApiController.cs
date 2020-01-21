@@ -8,8 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.CognitiveServices.Vision.ComputerVision;
 using Microsoft.Azure.CognitiveServices.Vision.ComputerVision.Models;
 using Orneholm.CognitiveJukebox.Web.Models;
-using SpotifyAPI.Web;
-using SpotifyAPI.Web.Enums;
+using Orneholm.CognitiveJukebox.Web.Services;
 using SpotifyAPI.Web.Models;
 
 namespace Orneholm.CognitiveJukebox.Web.Controllers
@@ -26,20 +25,53 @@ namespace Orneholm.CognitiveJukebox.Web.Controllers
 
         private readonly TelemetryClient _telemetryClient;
         private readonly IComputerVisionClient _computerVisionClient;
-        private readonly SpotifyWebAPI _spotifyWebApi;
+        private readonly ISpotifySearcher _spotifySearcher;
 
 
-        public ImageApiController(TelemetryClient telemetryClient, IComputerVisionClient computerVisionClient, SpotifyWebAPI spotifyWebApi)
+        public ImageApiController(TelemetryClient telemetryClient, IComputerVisionClient computerVisionClient, ISpotifySearcher spotifySearcher)
         {
             _telemetryClient = telemetryClient;
             _computerVisionClient = computerVisionClient;
-            _spotifyWebApi = spotifyWebApi;
+            _spotifySearcher = spotifySearcher;
         }
 
         [HttpPost("analyze")]
         public async Task<ActionResult<ImageAnalyzeResult>> Index(IFormFile file)
         {
-            var analyzeImageResult = await _computerVisionClient.AnalyzeImageInStreamAsync(file.OpenReadStream(), VisualFeatures);
+            try
+            {
+                var analyzeResult = await GetAnalyzeResult(file);
+
+                _telemetryClient.TrackEvent("CB_ImageAnalyzed", new Dictionary<string, string>
+                {
+                    { "CB_PersonAge", analyzeResult.Faces.FirstOrDefault()?.Age.ToString("D") ?? string.Empty },
+                    { "CB_PersonGender", analyzeResult.Faces.FirstOrDefault()?.Gender.ToString() ?? string.Empty },
+                    { "CB_MusicYear", analyzeResult.MusicYear.ToString("D") },
+
+                    { "CB_TrackName", analyzeResult.MusicTracks.FirstOrDefault()?.TrackName ?? string.Empty },
+                    { "CB_ArtistName", analyzeResult.MusicTracks.FirstOrDefault()?.ArtistName ?? string.Empty },
+                    { "CB_AlbumName", analyzeResult.MusicTracks.FirstOrDefault()?.AlbumName ?? string.Empty },
+
+                    { "CB_Source", "Site" }
+                });
+
+                return analyzeResult;
+            }
+            catch (Exception ex)
+            {
+                _telemetryClient.TrackException(ex, new Dictionary<string, string>
+                {
+                    { "CB_Source", "Site" }
+                });
+
+                throw;
+            }
+        }
+
+        private async Task<ImageAnalyzeResult> GetAnalyzeResult(IFormFile file)
+        {
+            var analyzeImageResult =
+                await _computerVisionClient.AnalyzeImageInStreamAsync(file.OpenReadStream(), VisualFeatures);
 
             var caption = GetCaption(analyzeImageResult);
 
@@ -48,7 +80,7 @@ namespace Orneholm.CognitiveJukebox.Web.Controllers
             var year = GetYearFromFace(face);
 
             var tracks = await GetTopRatedTracks(year);
-            var randomTracks = tracks.Take(10).OrderBy(a => Guid.NewGuid()).ToList();
+            var randomTracks = tracks.Take(5).OrderBy(a => Guid.NewGuid()).ToList();
 
             var viewModel = new ImageAnalyzeResult
             {
@@ -105,7 +137,7 @@ namespace Orneholm.CognitiveJukebox.Web.Controllers
 
         private async Task<List<FullTrack>> GetTopRatedTracks(int year)
         {
-            var trackSearchResult = await _spotifyWebApi.SearchItemsAsync($"year:{year:D}", SearchType.Track, limit: 50);
+            var trackSearchResult = await _spotifySearcher.SearchTopTracksAsync($"year:{year:D}");
             return trackSearchResult.Tracks
                 .Items
                 .Where(x => !x.Explicit)
