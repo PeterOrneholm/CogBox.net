@@ -122,19 +122,33 @@ h1 {
 
 .cb-webcam-wrapper .cb-webcam-description {
     position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    padding: 5px 5px 5px 5px;
+    background-color: rgba(255, 255, 255, 0.8);
+    color: #000;
+    font-size: 10px;
+    text-align: center;
+    transition: transform 1s;
+    transform: translateY(-98%);
+}
+
+.cb-webcam-wrapper .cb-webcam-age {
+    position: absolute;
     bottom: 0;
     left: 0;
     right: 0;
     padding: 10px 10px 15px 10px;
     background-color: rgba(255, 255, 255, 0.8);
     color: #000;
-    font-size: 20px;
+    font-size: 18px;
     text-align: center;
     transition: transform 1s;
     transform: translateY(98%);
 }
 
-.cb-activated .cb-webcam-description {
+.cb-activated .cb-webcam-age {
     transform: translateY(0);
 }
 
@@ -194,7 +208,7 @@ h1 {
     padding: 10px 10px 15px 10px;
     background-color: rgba(255, 255, 255, 0.8);
     color: #000;
-    font-size: 20px;
+    font-size: 18px;
     text-align: center;
 }
 

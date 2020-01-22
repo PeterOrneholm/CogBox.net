@@ -105,7 +105,7 @@
 
         cbRoot.classList.add('cb-activated');
 
-        songDescriptionElement.innerText = musicTrack.trackName + ' by ' + musicTrack.artistName;
+        songDescriptionElement.innerText = musicTrack.trackName + ' by ' + musicTrack.artistName + ' from ' + musicYear;
         songImageElement.src = musicTrack.albumCoverUrl;
         songProgressElement.style.width = 0;
 
@@ -131,13 +131,18 @@
 
     function showAnalyzeResult(image, musicTracks) {
         var descriptionElement = cbRoot.querySelector('.cb-webcam-description');
+        var ageElement = cbRoot.querySelector('.cb-webcam-age');
 
         if (image.faces.length > 0) {
-            descriptionElement.innerText = image.description;
             var face = image.faces[0];
+
+            descriptionElement.innerText = image.description;
+            ageElement.innerText = face.age + ' years old ' + (face.gender === 0 ? 'male' : 'female');
+
             showMusic(face, image.musicYear, musicTracks);
         } else {
             descriptionElement.innerText = 'Could not find any face in the picture.';
+            ageElement.innerText = '';
             cbRoot.classList.add('cb-info');
         }
     }
