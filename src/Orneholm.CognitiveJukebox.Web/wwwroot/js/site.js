@@ -161,17 +161,23 @@
 
     function speak(text) {
         return new Promise(function (resolve, reject) {
-            if (!window.speechSynthesis || !SpeechSynthesisUtterance) {
+            try {
+                if (!window.speechSynthesis || !SpeechSynthesisUtterance) {
+                    console.log(text);
+                    resolve();
+                    return;
+                }
+
+                var message = new SpeechSynthesisUtterance(text);
+                message.onend = function (e) {
+                    resolve();
+                };
+                window.speechSynthesis.speak(message);
+            } catch (e) {
                 console.log(text);
                 resolve();
                 return;
             }
-
-            var message = new SpeechSynthesisUtterance(text);
-            message.onend = function (e) {
-                resolve();
-            };
-            window.speechSynthesis.speak(message);
         });
     }
 
