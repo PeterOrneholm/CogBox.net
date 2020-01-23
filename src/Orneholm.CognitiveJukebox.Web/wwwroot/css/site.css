@@ -103,7 +103,7 @@ h1 {
 }
 
 .cb-activated .cb-webcam-wrapper {
-    transform: rotate(-1deg) translate(0, -15px);
+    transform: rotate(0) translate(0, 15px);
 }
 
 @media (min-width: 768px) {
@@ -191,7 +191,7 @@ h1 {
 }
 
 .cb-activated .cb-song-wrapper {
-    transform: rotate(1deg) translate(0, 15px);
+    transform: rotate(0) translate(0, 0);
 }
 
 @media (min-width: 768px) {
