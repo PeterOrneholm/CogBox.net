@@ -161,6 +161,19 @@
 
     function speak(text) {
         return new Promise(function (resolve, reject) {
+            var isIOS = (/iPad|iPhone|iPod/.test(navigator.platform) ||
+                            (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1)) &&
+                !window.MSStream;
+
+            if (isIOS) {
+                // iOS does not speak if it's not triggered by user action
+                // We trigger it on fetch callback and does not seem to work.
+
+                console.log(text);
+                resolve();
+                return;
+            }
+
             try {
                 if (!window.speechSynthesis || !SpeechSynthesisUtterance) {
                     console.log(text);
@@ -194,6 +207,7 @@
         clearInterval(fadeAudio);
         return new Promise(function (resolve, reject) {
             stopSound();
+            audio.autoplay = true;
             audio.src = url;
             audio.addEventListener('loadedmetadata', function (e) {
                 audio.play();
