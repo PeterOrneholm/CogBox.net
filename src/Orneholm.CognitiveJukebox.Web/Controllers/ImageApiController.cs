@@ -70,8 +70,7 @@ namespace Orneholm.CognitiveJukebox.Web.Controllers
 
         private async Task<ImageAnalyzeResult> GetAnalyzeResult(IFormFile file)
         {
-            var analyzeImageResult =
-                await _computerVisionClient.AnalyzeImageInStreamAsync(file.OpenReadStream(), VisualFeatures);
+            var analyzeImageResult = await _computerVisionClient.AnalyzeImageInStreamAsync(file.OpenReadStream(), VisualFeatures);
 
             var caption = GetCaption(analyzeImageResult);
 
