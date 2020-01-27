@@ -97,7 +97,7 @@
         });
     }
 
-    function showMusic(face, musicYear, musicTracks) {
+    function showMusic(face, musicYear, musicTracks, description) {
         var musicTrack = musicTracks[0];
         var songImageElement = cbRoot.querySelector('.cb-song-image');
         var songDescriptionElement = cbRoot.querySelector('.cb-song-description');
@@ -115,11 +115,7 @@
 
         stopSound();
 
-        var personDescription = 'According to my AI, you look like ' + face.age + ' years old.';
-        var musicDescription = 'I will play ' + musicTrack.trackName + ' by ' + musicTrack.artistName + '. A great album from ' + musicYear;
-        var suffix = getNextQuote();
-
-        speak([personDescription, musicDescription, suffix].join(' ')).then(function () {
+        speak(description).then(function () {
             playSound(musicTrack.trackAudioPreviewUrl, true, onProgress).then(function () {
                 cbRoot.classList.remove('cb-activated');
                 setTimeout(function () {
@@ -136,10 +132,18 @@
         if (image.faces.length > 0) {
             var face = image.faces[0];
 
-            descriptionElement.innerText = image.description;
-            ageElement.innerText = face.age + ' years old ' + (face.gender === 0 ? 'male' : 'female');
+            var musicTrack = musicTracks[0];
 
-            showMusic(face, image.musicYear, musicTracks);
+            var personDescription = 'You look like ' + face.age + ' years old.';
+            var musicDescription = 'I will play ' + musicTrack.trackName + ' by ' + musicTrack.artistName + '. A great album from ' + image.musicYear + '.';
+            var suffix = getNextQuote();
+
+            var description = [personDescription, musicDescription, suffix].join(' ');
+
+            descriptionElement.innerText = image.description;
+            ageElement.innerText = personDescription;
+
+            showMusic(face, image.musicYear, musicTracks, description);
         } else {
             descriptionElement.innerText = 'Could not find any face in the picture.';
             ageElement.innerText = '';
@@ -162,11 +166,14 @@
     function speak(text) {
         return new Promise(function (resolve, reject) {
             var isIOS = (/iPad|iPhone|iPod/.test(navigator.platform) ||
-                            (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1)) &&
-                !window.MSStream;
+                        (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1)) &&
+                        !window.MSStream;
 
-            if (isIOS) {
-                // iOS does not speak if it's not triggered by user action
+            var isAndroid = /(android)/i.test(navigator.userAgent);
+
+
+            if (isIOS || isAndroid) {
+                // iOS & Android does not speak if it's not triggered by user action
                 // We trigger it on fetch callback and does not seem to work.
 
                 console.log(text);

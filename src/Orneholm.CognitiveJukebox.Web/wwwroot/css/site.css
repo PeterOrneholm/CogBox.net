@@ -32,7 +32,7 @@ h1 {
         text-decoration: underline;
     }
 
-.cb-header-description {
+.cb-header-subtitle, .cb-header-description {
     color: #fff;
 }
 
