@@ -17,7 +17,7 @@
 
         <RepositoryType>git</RepositoryType>
         <RepositoryUrl>https://github.com/PeterOrneholm/CogBox.net.git</RepositoryUrl>
-        <PackageProjectUrl>https://github.com/PeterOrneholm/CogBox.net.net</PackageProjectUrl>
+        <PackageProjectUrl>https://github.com/PeterOrneholm/CogBox.net</PackageProjectUrl>
 
         <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
         <DockerfileContext>..\..</DockerfileContext>
