@@ -16,8 +16,8 @@
         <Copyright>Copyright © Peter Örneholm</Copyright>
 
         <RepositoryType>git</RepositoryType>
-        <RepositoryUrl>https://github.com/PeterOrneholm/Jukebox.ai.git</RepositoryUrl>
-        <PackageProjectUrl>https://github.com/PeterOrneholm/Jukebox.ai.net</PackageProjectUrl>
+        <RepositoryUrl>https://github.com/PeterOrneholm/CogBox.net.git</RepositoryUrl>
+        <PackageProjectUrl>https://github.com/PeterOrneholm/CogBox.net</PackageProjectUrl>
 
         <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
         <DockerfileContext>..\..</DockerfileContext>
