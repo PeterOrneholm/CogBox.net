@@ -75,6 +75,54 @@
     <!-- Body -->
     @RenderBody()
 
+    <footer class="cb-footer">
+        <div class="container">
+            <div class="row">
+                <div class="col-sm-4">
+                    <h4 id="about">About</h4>
+                    <p>
+                        CogBox.net is a jukebox that tries to figure out your age plays music from the year you were born.
+                    </p>
+                    <p>
+                        The age calculated is based on a pre-trained AI-model and should not bee seen as am absolute truth.
+                    </p>
+                    <p>
+                        It is created using <a href="https://www.microsoft.com/cognitive-services">Azure Cognitive Services</a> and <a href="https://developer.spotify.com/web-api/">Spotify API</a>. A <a href="https://peter.orneholm.com/post/190501060533/cogboxnet-a-jukebox-enhanced-with-cognitive">blog post is available</a> with more details.
+                    </p>
+                    <p>
+                        The <a href="https://github.com/PeterOrneholm/CogBox.net">Sourcecode is available at GitHub</a> and <a href="https://hub.docker.com/r/peterorneholm/orneholmcognitivejukeboxweb">Docker image available at Dockerhub</a>.
+                    </p>
+                </div>
+
+                <div class="col-sm-4">
+                    <h4>Privacy</h4>
+                    <p>
+                        This site don't store any of the pictures you take in this application. To see how the site performs, we do keep anonymized information of the result that the AI comes up with, for example what age it guesses and what music it plays.
+                    </p>
+                </div>
+
+                <div class="col-sm-4">
+                    <h4>Author</h4>
+                    <p>
+                        Developed by <a href="https://twitter.com/PeterOrneholm" target="_blank">@@PeterOrneholm</a> at <a href="https://www.activesolution.se/">Active Solution</a> as a demo for the session <a href="http://bit.ly/peterorneholm-democratizing-ai">Democratizing AI with Azure Cognitive Services</a>.
+                    </p>
+                    <p>
+                        This site is part of a set of AI Experiments:
+
+                        <ul class="list-unstyled mt-1">
+                            <li><a href="https://birdornot.net/">BirdOrNot.net</a></li>
+                            <li><a href="https://cogbox.net/">CogBox.net</a></li>
+                            <li><a href="https://radiotext.net/">RadioText.net</a></li>
+                        </ul>
+                    </p>
+                </div>
+            </div>
+            <p class="cb-footer-sitename">
+                CogBox.net
+            </p>
+        </div>
+    </footer>
+
     <!-- Scripts -->
     @RenderSection("Scripts", required: false)
     <script src="~/js/site.js" asp-append-version="true"></script>
